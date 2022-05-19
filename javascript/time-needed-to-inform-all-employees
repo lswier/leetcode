@@ -1,0 +1,41 @@
+/**
+ * @param {number} n
+ * @param {number} headID
+ * @param {number[]} manager
+ * @param {number[]} informTime
+ * @return {number}
+ */
+
+var glob_manager = [];
+var glob_informTime = [];
+
+var numOfMinutes = function(n, headID, manager, informTime) {
+    
+    //  Need to find the WORST case scenario for each branch down tree.
+    //  Keep track of current max, if greater, then replace value.
+    var max = 0;
+    glob_manager = manager;
+    glob_informTime = informTime;
+    
+    for (var i = 0; i < n; i++){        
+        // We only want to start from leaf nodes.
+        if (informTime[i] === 0){
+            let sum = 0;
+            // Calculate time from leaf to root.
+            sum = findTime(i, sum);
+            max = sum > max ? sum : max;
+        }
+    } 
+    
+    return max;    
+};
+
+// Recursive function to find total time from leaf to node
+function findTime(numEmployee, runningSum){
+    
+    runningSum += glob_informTime[numEmployee];
+    if (glob_manager[numEmployee] != -1){
+        runningSum = findTime(glob_manager[numEmployee], runningSum);
+    }    
+    return runningSum;
+}
