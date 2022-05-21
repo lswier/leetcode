@@ -10,39 +10,35 @@ var frogPosition = function(n, edges, t, target) {
     
     target--; // Account for zero-indexed arrays.
     
-    // Adjacency list representation of graph
-    var adjMatrix = Array(n);
-    for (let i = 0; i < n; i++){
-        adjMatrix[i] = Array(n).fill(0);
+    // create adjList graph
+    var g = Array(n);
+    for (let i = 0; i < n; i++) g[i] = [];
+    for (let i = 0; i < edges.length; i++){
+        let src = edges[i][0]-1;    // -1 to account for 0-indexing
+        let dst = edges[i][1]-1;    // -1 to account for 0-indexing
+        g[src].push(dst);
+        g[dst].push(src);
     }
     
-    // create graph
-    for (let i = 0; i < edges.length; i++){
-        let src = edges[i][0]-1;
-        let dst = edges[i][1]-1;
-        adjMatrix[src][dst] = 1;
-        adjMatrix[dst][src] = 1;
-    }
     // create visited array
     var visited = Array(n).fill(false);
     
     // iterate through graph DFS
-    let v = 0;         // current vertex
+    let v = 0;
     let curTime = 0; 
-    let prob = DFS(adjMatrix, visited, v, curTime, t, target, 1);
-    return typeof prob == "number" ? prob : 0;
+    return DFS(g, visited, v, curTime, t, target, 1);
 }
 
 function DFS(g, visited, v, curTime, t, target, prob){
     visited[v] = true;
     
     // create adjacency list for current node and DFS on each entry.
-    let adjList = g[v].map((node, id) => node==1 ? id : -1).filter(i => i != -1).filter(i => visited[i] != true);
+    let adjNodes = g[v].filter(i => visited[i] != true);
     
     // If we have reached the target node and:
     //  - it is a leaf node (repeated jumps on same node)
     //  - the current time is at the bounds set by t
-    if (v == target && (adjList.length == 0 || curTime == t)) {
+    if (v == target && (adjNodes.length == 0 || curTime == t)) {
         return prob;
     }
     
@@ -50,11 +46,12 @@ function DFS(g, visited, v, curTime, t, target, prob){
     if (curTime < t){
         curTime++;
         // adjust probability based on number of children in list.
-        let p = prob/adjList.length;
-        for (let i = 0; i < adjList.length; i++){
-            prob = DFS(g, visited, adjList[i], curTime, t, target, p);
+        let p = prob/adjNodes.length;
+        for (let i = 0; i < adjNodes.length; i++){
+            prob = DFS(g, visited, adjNodes[i], curTime, t, target, p);
             if (prob > 0) return prob;
         }
     }
+    return 0;
 }
 
