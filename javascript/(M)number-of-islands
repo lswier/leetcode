@@ -1,0 +1,59 @@
+/**
+ * @param {character[][]} grid
+ * @return {number}
+ */
+
+var numIslands = function(grid) {
+    const height = grid.length;
+    const width = grid[0].length;
+    
+    // Initialise empty grid to track which entries have been 'visited'.
+    var visited = Array(height);
+    for (let i = 0; i < height; i++) visited[i] = Array(width).fill(0);
+    
+    var numIslands = 0;
+    
+    for (let i = 0; i < height; i++){
+        for (let j = 0; j < width; j++){
+            if ((grid[i][j] == 1) && (visited[i][j] == 0)){
+                // New island detected - find bounds and record in visited
+                numIslands++;
+                findEdges(grid, visited, i, j, height, width);
+            }
+        }
+    }
+    return numIslands;
+};
+
+// Find the edges of the island by recording visited entries.
+function findEdges(grid, visited, row, col, height, width){
+    visited[row][col] = 1;
+    
+    // If surrounding nodes are not visited, recursively call function on them.
+    // Ensuring bounds of grid are checked first!
+    
+    // Lower entry 
+    if (row + 1 < height){
+        if (grid[row+1][col] == 1 && visited[row+1][col] == 0){
+            findEdges(grid, visited, row+1, col, height, width);
+        }
+    }
+    // Upper entry
+    if (row - 1 >= 0){
+        if (grid[row-1][col] == 1 && visited[row-1][col] == 0){
+            findEdges(grid, visited, row-1, col, height, width);
+        }
+    }
+    // Left entry
+    if (col - 1 >= 0){
+        if (grid[row][col-1] == 1 && visited[row][col-1] == 0){
+            findEdges(grid, visited, row, col-1, height, width);
+        }
+    }
+    // Right entry
+    if (col + 1 < width){
+        if (grid[row][col+1] == 1 && visited[row][col+1] == 0){
+            findEdges(grid, visited, row, col+1, height, width);
+        }
+    }   
+}
