@@ -1,0 +1,27 @@
+from time import sleep
+
+class Foo:
+    def __init__(self):
+        # Ordering based on simple locking mechanism of flags initialised to false
+        self.flag1 = False;
+        self.flag2 = False;
+        pass
+
+    def first(self, printFirst: 'Callable[[], None]') -> None:
+        # printFirst() outputs "first". Do not change or remove this line.
+        printFirst()
+        self.flag1 = True
+
+    def second(self, printSecond: 'Callable[[], None]') -> None:
+        # printSecond() outputs "second". Do not change or remove this line.
+        while(self.flag1 == False):
+            sleep(0.001)
+        printSecond()
+        self.flag2 = True;
+
+    def third(self, printThird: 'Callable[[], None]') -> None:
+        # printThird() outputs "third". Do not change or remove this line.
+        while(self.flag2 == False):
+            sleep(0.001)
+        printThird()
+        
