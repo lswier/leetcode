@@ -1,27 +1,28 @@
-from time import sleep
+from threading import Barrier
 
 class Foo:
     def __init__(self):
         # Ordering based on simple locking mechanism of flags initialised to false
-        self.flag1 = False;
-        self.flag2 = False;
+        self.bar = Barrier(3)
+        
         pass
 
     def first(self, printFirst: 'Callable[[], None]') -> None:
         # printFirst() outputs "first". Do not change or remove this line.
         printFirst()
-        self.flag1 = True
-
+        self.bar.wait()
+        self.bar.wait()
+        
     def second(self, printSecond: 'Callable[[], None]') -> None:
         # printSecond() outputs "second". Do not change or remove this line.
-        while(self.flag1 == False):
-            sleep(0.001)
+        self.bar.wait()
         printSecond()
-        self.flag2 = True;
+        self.bar.wait()
+        
 
     def third(self, printThird: 'Callable[[], None]') -> None:
         # printThird() outputs "third". Do not change or remove this line.
-        while(self.flag2 == False):
-            sleep(0.001)
+        self.bar.wait()
+        self.bar.wait()
         printThird()
         
